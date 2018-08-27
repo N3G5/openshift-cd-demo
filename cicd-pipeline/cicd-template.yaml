@@ -44,7 +44,7 @@ objects:
   kind: BuildConfig
   metadata:
     annotations:
-      pipeline.alpha.openshift.io/uses: '[{"name": "jenkins", "namespace": "", "kind": "DeploymentConfig"}]'
+      pipeline.alpha.openshift.io/uses: '[{"name": "jenkins", "namespace": "cicd", "kind": "DeploymentConfig"}]'
     labels:
       app: cicd-pipeline
       name: cicd-pipeline
@@ -75,7 +75,7 @@ objects:
   kind: BuildConfig
   metadata:
     annotations:
-      pipeline.alpha.openshift.io/uses: '[{"name": "jenkins", "namespace": "", "kind": "DeploymentConfig"}]'
+      pipeline.alpha.openshift.io/uses: '[{"name": "jenkins", "namespace": "cicd", "kind": "DeploymentConfig"}]'
     labels:
       app: cicd-pipeline
       name: cicd-pipeline
@@ -160,14 +160,20 @@ objects:
         containers:
         - env:
           - name: CICD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
+            value: cicd
           command:
           - /bin/bash
           - -x
           - -c
           - |
+            oc project cicd
+            oc policy add-role-to-user admin developer -n cicd
+            oc policy add-role-to-user admin developer -n todolist-dev
+            oc policy add-role-to-user admin developer -n todolist-stage
+            
+            oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n dev
+            oc policy add-role-to-user edit system:serviceaccount:cicd:jenkins -n stage
+            
             oc set resources dc/jenkins --limits=cpu=2,memory=2Gi --requests=cpu=100m,memory=512Mi 
             oc label dc jenkins app=jenkins --overwrite 
 
@@ -220,7 +226,7 @@ objects:
 
             cat <<EOF > /tmp/data.json
             {
-              "clone_addr": "https://github.com/N3G5/todoapp-be.git",
+              "clone_addr": "http://gogs.todolist.datenplattform.tk/gogs/todoapp-be.git",
               "uid": 1,
               "repo_name": "todoapp-be"
             }
@@ -264,7 +270,7 @@ objects:
 
             cat <<EOF > /tmp/data.json
             {
-              "clone_addr": "https://github.com/N3G5/todoapp-fe.git",
+              "clone_addr": "http://gogs.todolist.datenplattform.tk/gogs/todoapp-fe.git",
               "uid": 1,
               "repo_name": "todoapp-fe"
             }
