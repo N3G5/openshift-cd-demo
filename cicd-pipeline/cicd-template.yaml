@@ -226,7 +226,7 @@ objects:
 
             cat <<EOF > /tmp/data.json
             {
-              "clone_addr": "http://gogs.todolist.datenplattform.tk/gogs/todoapp-be.git",
+              "clone_addr": "https://github.com/N3G5/todoapp-be.git",
               "uid": 1,
               "repo_name": "todoapp-be"
             }
@@ -270,7 +270,7 @@ objects:
 
             cat <<EOF > /tmp/data.json
             {
-              "clone_addr": "http://gogs.todolist.datenplattform.tk/gogs/todoapp-fe.git",
+              "clone_addr": "https://github.com/N3G5/todoapp-fe.git",
               "uid": 1,
               "repo_name": "todoapp-fe"
             }
